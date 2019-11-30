@@ -2,8 +2,8 @@
 //  rps.c
 //  
 //
-//  Created by Ade Oyefeso on 2019-10-21.
-//
+//  Rock Paper Scissors game Created by Ade Oyefeso on 2019-10-21.
+//  
 
 #include <stdio.h>
 #include <stdlib.h>
