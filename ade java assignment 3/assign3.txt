@@ -1,0 +1,792 @@
+Script started on Sun Dec  1 11:32:20 2019
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+[?1034hbash-3.2$ act[K[K[Kcd Desktop
+bash-3.2$ cat TicTacToe.java
+public class TicTacToe {
+
+    public static void main(String args[]) {
+
+        game myGame = new game();
+
+        myGame.start();
+
+    }
+
+}
+
+bash-3.2$ cat game.java
+bash-3.2$ cat game.java
+import java.util.Random;
+import java.util.Scanner;
+
+class game implements global {
+
+    board gameBoard;
+    player PlayerX;
+    player PlayerO;
+    int turn;
+    boolean done = false;
+
+
+    public game() {
+
+        Scanner scan = new Scanner(System.in);
+        this.gameBoard = new board();
+
+        String s1 = null;
+        String s2 = "ADE AI";
+
+        int input = 0;
+
+        while (!this.done) {
+
+            System.out.println("Welcome to Adeoluwa Oyefeso's Tic Tac Toe game, The only game option is Human vs AI press 1 to play");
+
+            input = scan.nextInt();
+
+            switch (input) {
+
+                case 1:
+                    System.out.println("Please enter Human playerX name: ");
+                    s1 = scan.next();
+
+                    this.done = true;
+                    continue;
+
+            }
+
+            System.out.println("Error... pls enter a valid selection");
+
+        }
+
+        if (input == 1){
+
+            this.PlayerX = new HumanPlayer(this.gameBoard, 1, s1);
+
+            this.PlayerO = new AIPlayer(this.gameBoard, 2, s2);
+
+
+        }
+
+            System.out.println("\nGAME BEGINS... " + s1 + " VS " + s2 + "\n");
+
+    }
+
+        public void start(){
+
+            Random rand = new Random();
+            boolean bool = false;
+
+            this.turn = rand.nextInt(2) + 1;
+
+            if (this.turn == 1) {
+                System.out.println(this.PlayerX.name + " wins the coin toss... X will start\n");
+
+            } else
+                System.out.println(this.PlayerO.name + " wins the coin toss... O will start\n");
+
+            while (!bool) {
+
+
+
+                if (this.turn == 1) {
+
+                    System.out.println( "" + this.PlayerX.name + "'s turn...");
+                    this.gameBoard.displayBoard();
+
+                    this.PlayerX.play(this.gameBoard);
+
+                }
+
+                else {
+
+                    System.out.println( "" + this.PlayerO.name + "'s turn...");
+                    this.gameBoard.displayBoard();
+
+                    this.PlayerO.play(this.gameBoard);
+
+                }
+
+
+                if (this.gameBoard.getState() != 0) bool = true;
+
+
+                if (!bool) {
+
+                    if (this.turn == 1) {
+
+                        this.turn = 2; continue;
+
+                    }
+
+                    this.turn = 1;
+
+                }
+
+            }
+
+            this.gameBoard.displayBoard();
+
+
+            if (this.gameBoard.getState() == 3) {
+
+                System.out.println("DRAW...");
+
+            }
+            else if (this.turn != 1) {
+
+                System.out.println(this.PlayerO + " WINS!!!!");
+
+            }
+            else {
+
+                System.out.println(this.PlayerX + " WINS!!!! ");
+            }
+
+
+        }
+
+    }
+
+bash-3.2$ cat AIPlayer.java
+import java.util.Random;
+
+public class AIPlayer extends player implements global {
+
+    public AIPlayer(board Board, int PMI, String Name) {
+        super(Board, PMI, Name);
+
+    }
+
+    public void play(board Board) {
+
+        int i = 0;
+
+
+
+        i = senseWin();
+
+        if (i != 0) {
+            
+            Board.makeMove(i, this.PlayerMoveIndicator);
+            return;
+
+        }
+
+        i = senseLoss();
+
+        if (i != 0) {
+            
+            Board.makeMove(i, this.PlayerMoveIndicator);
+            return;
+
+        }
+
+        i = randomLegal();
+
+        Board.makeMove(i, this.PlayerMoveIndicator);
+        System.out.println(this.name + ": I played at position " + i);
+
+    }
+
+        private int senseWin(){
+
+            for (int a = 0; a < 3; a++) {
+
+
+
+                for (int b = 0; b < 3; b++) {
+
+
+
+                    if (this.gameBoard.blocks[a][b].getState() == 0) {
+
+
+                        int p2 = 0;
+
+                        if (this.gameBoard.blocks[0][b].getState() == this.PlayerMoveIndicator) p2++;
+
+                        if (this.gameBoard.blocks[1][b].getState() == this.PlayerMoveIndicator) p2++;
+
+                        if (this.gameBoard.blocks[2][b].getState() == this.PlayerMoveIndicator) p2++;
+
+                        if (p2 == 2) return 3 * a + 1 + b;
+
+
+
+                        p2 = 0;
+
+                        if (this.gameBoard.blocks[a][0].getState() == this.PlayerMoveIndicator) p2++;
+
+                        if (this.gameBoard.blocks[a][1].getState() == this.PlayerMoveIndicator) p2++;
+
+                        if (this.gameBoard.blocks[a][2].getState() == this.PlayerMoveIndicator) p2++;
+
+                        if (p2 == 2) return 3 * a + 1 + b;
+
+
+
+                        p2 = 0;
+
+                        if ((a == 0 && b == 2) || (a == 1 && b == 1) || (a == 2 && b == 0)) {
+
+
+
+                            if (this.gameBoard.blocks[0][2].getState() == this.PlayerMoveIndicator) p2++;
+
+                            if (this.gameBoard.blocks[1][1].getState() == this.PlayerMoveIndicator) p2++;
+
+                            if (this.gameBoard.blocks[2][0].getState() == this.PlayerMoveIndicator) p2++;
+
+                            if (p2 == 2) return 3 * a + 1 + b;
+
+
+
+                        }
+
+                        p2 = 0;
+
+                        if ((a == 0 && b == 0) || (a == 1 && b == 1) || (a == 2 && b == 2)) {
+
+
+
+                            if (this.gameBoard.blocks[0][0].getState() == this.PlayerMoveIndicator) p2++;
+
+                            if (this.gameBoard.blocks[1][1].getState() == this.PlayerMoveIndicator) p2++;
+
+                            if (this.gameBoard.blocks[2][2].getState() == this.PlayerMoveIndicator) p2++;
+
+                            if (p2 == 2) return 3 * a + 1 + b;
+
+
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+
+
+            return 0;
+
+        }
+
+
+        private int senseLoss() {
+
+            boolean bool;
+
+            if (this.PlayerMoveIndicator == 1) {
+
+                bool = true;
+
+            } else {
+
+                bool = true;
+
+            }
+
+
+
+
+            return 0;
+
+        }
+
+
+        private int randomLegal() {
+
+            int h = 0;
+
+            int[] arrayOfInt = new int[9];
+
+            Random random = new Random();
+
+
+
+            for (int b = 0; b < 3; b++) {
+
+
+
+                for (int c = 0; c < 3; c++) {
+
+
+
+                    if (this.gameBoard.blocks[b][c].getState() == 0)
+
+                    {
+
+                        arrayOfInt[h++] = 3 * b + 1 + c;
+
+                    }
+
+                }
+
+            }
+
+
+            return arrayOfInt[random.nextInt(h)];
+
+        }
+
+
+    }
+
+bash-3.2$ cat HumanPlayer.java
+import java.util.Scanner;
+
+public class HumanPlayer extends player implements global{
+
+        public HumanPlayer(board Board, int PMI, String Name){
+
+            super(Board, PMI, Name);
+        }
+
+        public void play(board Board){
+
+            boolean bool;
+            Scanner scan = new Scanner(System.in);
+
+            this.gameBoard = Board;
+
+
+                do {
+
+                    System.out.println("Please make a move by selecting one of the available options: ");
+                    Board.displayAvailableMoves();
+
+                    int i = scan.nextInt();
+
+                    bool = Board.makeMove(i, this.PlayerMoveIndicator);
+
+                    if (bool) {
+                        continue;
+                    }
+                    System.out.println("Invalid move... Please try again");
+
+                }
+
+                while (!bool);
+
+
+        }
+
+
+
+}
+
+
+bash-3.2$ cat block.jac[Kva
+public class block implements global {
+
+    protected int state = 0;
+
+    public boolean setState(int PMI){
+
+        if(isValidState(PMI)){
+
+            this.state = PMI;
+
+            return true;
+        }
+
+        return false;
+
+    }
+    public int getState() {
+
+        return this.state;
+
+    }
+
+    public boolean isValidState(int PMI) {
+
+        return (PMI == 2 || PMI == 1);
+    }
+
+    public String toString() {
+
+        if (this.state == 1)
+
+            return "X";
+
+        if (this.state == 0) {
+
+            return " ";
+
+        }
+
+        return "O";
+
+    }
+
+}
+bash-3.2$ cat board.jaca[K[Kva
+public class board implements global {
+
+
+    protected int state = 0;
+
+
+
+    public block[][] blocks = new block[3][3];
+
+    public board() {
+
+        for (int b = 0; b < 3; b++) {
+
+
+
+            for (int c = 0; c < 3; c++)
+
+            {
+
+                this.blocks[b][c] = new block();
+
+            }
+
+        }
+
+    }
+
+    public void displayBoard() {
+
+        System.out.print("" + this.blocks[0][0] + "|" + this.blocks[0][1] + "|" + this.blocks[0][2] + "\n");
+
+        System.out.print("" + this.blocks[1][0] + "|" + this.blocks[1][1] + "|" + this.blocks[1][2] + "\n");
+
+        System.out.print("" + this.blocks[2][0] + "|" + this.blocks[2][1] + "|" + this.blocks[2][2] + "\n");
+
+    }
+
+    public void displayAvailableMoves() {
+
+        int a = 1;
+
+        for (int b = 0; b < 3; b++) {
+
+
+            for (int c = 0; c < 3; c++) {
+
+
+                System.out.print((this.blocks[b][c].getState() == 0) ? Integer.valueOf(a) : this.blocks[b][c]);
+
+                a++;
+
+                if (c != 2) System.out.print("|");
+
+            }
+            System.out.print("\n");
+
+        }
+    }
+
+
+    public int updateState() {
+
+        int i = checkRow(0) + checkRow(1) + checkRow(2) + checkCol(0) + checkCol(1) + checkCol(2) + checkDiagonal();
+
+
+        if (i != 0) {
+
+            this.state = i;
+
+        }
+
+        else {
+
+            this.state = checkDraw();
+
+        }
+
+        return this.state;
+
+    }
+
+
+    public int  getState(){
+
+        return updateState();
+    }
+
+
+    public int checkDraw(){
+
+        for (int b = 0; b < 3; b++){
+
+            for (int c = 0; c < 3; c++){
+
+                if (this.blocks[b][c].getState() == 0)
+
+                    return 0;
+            }
+        }
+        return 3;
+
+    }
+
+
+
+    private int checkRow(int PMI) {
+
+        if (this.blocks[PMI][0].getState() != 0)
+
+        {
+
+            if (this.blocks[PMI][0].getState() == this.blocks[PMI][1].getState() && this.blocks[PMI][1]
+
+                    .getState() == this.blocks[PMI][2].getState())
+
+                return this.blocks[PMI][0].getState();
+
+        }
+
+        return 0;
+
+    }
+
+
+
+    private int checkCol(int PMI) {
+
+        if (this.blocks[0][PMI].getState() != 0)
+
+        {
+
+            if (this.blocks[0][PMI].getState() == this.blocks[1][PMI].getState() && this.blocks[1][PMI].getState() == this.blocks[2][PMI].getState())
+
+                return this.blocks[0][PMI].getState();
+
+        }
+
+        return 0;
+
+    }
+
+
+
+    private int checkDiagonal() {
+
+        if (this.blocks[0][0].getState() != 0)
+
+        {
+
+            if (this.blocks[0][0].getState() == this.blocks[1][1].getState() && this.blocks[1][1].getState() == this.blocks[2][2].getState()) {
+
+                return this.blocks[0][0].getState();
+
+            }
+
+        }
+
+        if (this.blocks[0][2].getState() != 0)
+
+        {
+
+            if (this.blocks[0][2].getState() == this.blocks[1][1].getState() && this.blocks[1][1].getState() == this.blocks[2][0].getState()) {
+
+                return this.blocks[0][2].getState();
+
+            }
+
+        }
+
+        return 0;
+
+    }
+    public boolean makeMove(int PMI1, int PMI2) {
+
+        int a = 0;
+        int b = 0;
+
+        if (PMI1 < 1 || PMI1 > 9) {
+
+            return false;
+        }
+
+        if (PMI1 == 1) {
+
+            a = 0; b = 0;
+        }
+
+        if (PMI1 == 2) {
+
+            a = 0; b = 1;
+        }
+
+        if (PMI1 == 3) {
+
+            a = 0; b = 2;
+        }
+
+        if (PMI1 == 4) {
+
+            a = 1; b = 0;
+        }
+
+        if (PMI1 == 5) {
+
+            a = 1; b = 1;
+        }
+
+        if (PMI1 == 6) {
+
+            a = 1; b = 2;
+        }
+
+        if (PMI1 == 7) {
+
+            a = 2; b = 0;
+        }
+
+        if (PMI1 == 8) {
+
+            a = 2; b = 1;
+        }
+
+        if (PMI1 == 9) {
+
+            a = 2; b = 2;
+        }
+
+
+        if (this.blocks[a][b].getState() == 0) {
+
+                this.blocks[a][b].setState(PMI2);
+
+                return true;
+
+        }
+
+        return false;
+
+    }
+
+
+}
+bash-3.2$ cat player.java
+public abstract class player {
+
+    public board gameBoard;
+    public String name;
+    public int PlayerMoveIndicator;
+
+    public abstract void play(board Board);
+    
+
+    public player(board Board, int PMI, String Name) {
+
+        this.gameBoard = Board;
+        this.name = Name;
+        this.PlayerMoveIndicator = PMI;
+
+    }
+
+    public String toString() {
+
+        return this.name;
+    }
+
+}
+
+
+
+bash-3.2$ cat global.java
+public interface global {
+
+    public static final int EMPTY = 0;
+    public static final int X = 1;
+    public static final int O = 1;
+    public static final int DRAW = 3;
+
+}
+bash-3.2$ javva[K[Kac g[KTicTacToe.java
+bash-3.2$ TitcT==[K[K[K[K[KcTacToejTicTacToeaTicTacToevTicTacToeaTicTacToe TicTacToe[C[C[C[C[C[C[C[C[C
+Welcome to Adeoluwa Oyefeso's Tic Tac Toe game, The only game option is Human vs AI press 1 to play
+1
+Please enter Human playerX name: 
+ade
+
+GAME BEGINS... ade VS ADE AI
+
+ade wins the coin toss... X will start
+
+ade's turn...
+ | | 
+ | | 
+ | | 
+Please make a move by selecting one of the available options: 
+1|2|3
+4|5|6
+7|8|9
+5
+ADE AI's turn...
+ | | 
+ |X| 
+ | | 
+ADE AI: I played at position 7
+ade's turn...
+ | | 
+ |X| 
+O| | 
+Please make a move by selecting one of the available options: 
+1|2|3
+4|X|6
+O|8|9
+1
+ADE AI's turn...
+X| | 
+ |X| 
+O| | 
+ADE AI: I played at position 9
+ade's turn...
+X| | 
+ |X| 
+O| |O
+Please make a move by selecting one of the available options: 
+X|2|3
+4|X|6
+O|8|O
+8
+ADE AI's turn...
+X| | 
+ |X| 
+O|X|O
+ADE AI: I played at position 2
+ade's turn...
+X|O| 
+ |X| 
+O|X|O
+Please make a move by selecting one of the available options: 
+X|O|3
+4|X|6
+O|X|O
+6
+ADE AI's turn...
+X|O| 
+ |X|X
+O|X|O
+ADE AI: I played at position 3
+ade's turn...
+X|O|O
+ |X|X
+O|X|O
+Please make a move by selecting one of the available options: 
+X|O|O
+4|X|X
+O|X|O
+4
+X|O|O
+X|X|X
+O|X|O
+ade WINS!!!! 
+bash-3.2$ exit
+exit
+
+Script done on Sun Dec  1 11:37:34 2019
