@@ -1,5 +1,5 @@
 import java.util.Random;
-
+//yo
 public class AIPlayer extends player implements global {
 
     public AIPlayer(board Board, int PMI, String Name) {
